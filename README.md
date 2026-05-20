@@ -1,5 +1,4 @@
 # End-to-End-LLM-Pipeline-for-Vietnamese-generated-text-bias
-# End-to-End LLM Pipeline for Vietnamese Generated Text Bias
 
 ## Overview
 
