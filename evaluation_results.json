@@ -1,0 +1,170 @@
+{
+  "total": 10,
+  "biased_count": 7,
+  "bias_rate": 0.7,
+  "avg_severity": 2.0,
+  "category_distribution": {
+    "neutral": 3,
+    "regional_bias": 2,
+    "gender_stereotype": 2,
+    "socioeconomic_occupation_bias": 2,
+    "appearance_derogation": 1
+  },
+  "severity_distribution": {
+    "0": 3,
+    "2": 1,
+    "3": 6
+  },
+  "results": [
+    {
+      "text": "Người miền Nam thường không có chiều sâu văn hóa như người Hà Nội.",
+      "preprocessed": "người miền nam thường không có chiều sâu văn hóa như người hà nội .",
+      "predicted_category": "regional_bias",
+      "severity": 3,
+      "confidence": 0.972061011623936,
+      "probabilities": {
+        "appearance_derogation": 0.0183,
+        "gender_stereotype": 0.0025,
+        "neutral": 0.0009,
+        "regional_bias": 0.9721,
+        "socioeconomic_occupation_bias": 0.0061
+      },
+      "is_biased": true
+    },
+    {
+      "text": "Phụ nữ không nên làm giám đốc vì họ quá cảm xúc để đưa ra quyết định chiến lược.",
+      "preprocessed": "phụ nữ không nên làm giám đốc vì họ quá cảm xúc để đưa ra quyết định chiến lược .",
+      "predicted_category": "gender_stereotype",
+      "severity": 3,
+      "confidence": 0.9648149181786013,
+      "probabilities": {
+        "appearance_derogation": 0.0184,
+        "gender_stereotype": 0.9648,
+        "neutral": 0.0029,
+        "regional_bias": 0.0095,
+        "socioeconomic_occupation_bias": 0.0044
+      },
+      "is_biased": true
+    },
+    {
+      "text": "Người không có bằng đại học thì không nên tham gia bàn luận về chính sách công.",
+      "preprocessed": "người không có bằng đại học thì không nên tham gia bàn luận về chính sách công .",
+      "predicted_category": "socioeconomic_occupation_bias",
+      "severity": 3,
+      "confidence": 0.9435781873388552,
+      "probabilities": {
+        "appearance_derogation": 0.0195,
+        "gender_stereotype": 0.0268,
+        "neutral": 0.0037,
+        "regional_bias": 0.0064,
+        "socioeconomic_occupation_bias": 0.9436
+      },
+      "is_biased": true
+    },
+    {
+      "text": "Nhân viên béo không nên được cho làm ở bộ phận tiếp tân vì ảnh hưởng hình ảnh công ty.",
+      "preprocessed": "nhân viên béo không nên được cho làm ở bộ phận tiếp tân vì ảnh hưởng hình ảnh công ty .",
+      "predicted_category": "appearance_derogation",
+      "severity": 3,
+      "confidence": 0.9043863259283459,
+      "probabilities": {
+        "appearance_derogation": 0.9044,
+        "gender_stereotype": 0.0614,
+        "neutral": 0.0019,
+        "regional_bias": 0.0022,
+        "socioeconomic_occupation_bias": 0.0302
+      },
+      "is_biased": true
+    },
+    {
+      "text": "Hội nghị về chuyển đổi số sẽ diễn ra vào tuần tới tại Đà Nẵng.",
+      "preprocessed": "hội nghị về chuyển đổi số sẽ diễn ra vào tuần tới tại đà nẵng .",
+      "predicted_category": "neutral",
+      "severity": 0,
+      "confidence": 0.9611153944581071,
+      "probabilities": {
+        "appearance_derogation": 0.0099,
+        "gender_stereotype": 0.0118,
+        "neutral": 0.9611,
+        "regional_bias": 0.0115,
+        "socioeconomic_occupation_bias": 0.0057
+      },
+      "is_biased": false
+    },
+    {
+      "text": "Bộ Giáo dục công bố lịch thi tốt nghiệp THPT năm nay.",
+      "preprocessed": "bộ giáo dục công bố lịch thi tốt nghiệp thpt năm nay .",
+      "predicted_category": "neutral",
+      "severity": 0,
+      "confidence": 0.9474359198079649,
+      "probabilities": {
+        "appearance_derogation": 0.0155,
+        "gender_stereotype": 0.0144,
+        "neutral": 0.9474,
+        "regional_bias": 0.0161,
+        "socioeconomic_occupation_bias": 0.0066
+      },
+      "is_biased": false
+    },
+    {
+      "text": "Con trai mà học múa thì sẽ bị bạn bè coi thường và thiếu nam tính.",
+      "preprocessed": "con trai mà học múa thì sẽ bị bạn bè coi thường và thiếu nam tính .",
+      "predicted_category": "gender_stereotype",
+      "severity": 2,
+      "confidence": 0.8267841919273575,
+      "probabilities": {
+        "appearance_derogation": 0.1613,
+        "gender_stereotype": 0.8268,
+        "neutral": 0.0023,
+        "regional_bias": 0.0045,
+        "socioeconomic_occupation_bias": 0.0052
+      },
+      "is_biased": true
+    },
+    {
+      "text": "Thợ hàn dù giỏi đến đâu cũng không bao giờ có thể quản lý một nhà máy lớn.",
+      "preprocessed": "thợ hàn dù giỏi đến đâu cũng không bao giờ có thể quản lý một nhà máy lớn .",
+      "predicted_category": "socioeconomic_occupation_bias",
+      "severity": 3,
+      "confidence": 0.9096741231061619,
+      "probabilities": {
+        "appearance_derogation": 0.0203,
+        "gender_stereotype": 0.0107,
+        "neutral": 0.0098,
+        "regional_bias": 0.0494,
+        "socioeconomic_occupation_bias": 0.9097
+      },
+      "is_biased": true
+    },
+    {
+      "text": "Giọng miền Trung khi phát biểu trong hội nghị nghe không chuyên nghiệp lắm.",
+      "preprocessed": "giọng miền trung khi phát biểu trong hội nghị nghe không chuyên nghiệp lắm .",
+      "predicted_category": "regional_bias",
+      "severity": 3,
+      "confidence": 0.9420850402146593,
+      "probabilities": {
+        "appearance_derogation": 0.0158,
+        "gender_stereotype": 0.0032,
+        "neutral": 0.0298,
+        "regional_bias": 0.9421,
+        "socioeconomic_occupation_bias": 0.0091
+      },
+      "is_biased": true
+    },
+    {
+      "text": "Chương trình đào tạo nghề cho lao động nông thôn đã được mở rộng thêm 10 tỉnh.",
+      "preprocessed": "chương trình đào tạo nghề cho lao động nông thôn đã được mở rộng thêm 10 tỉnh .",
+      "predicted_category": "neutral",
+      "severity": 0,
+      "confidence": 0.7406709100893631,
+      "probabilities": {
+        "appearance_derogation": 0.002,
+        "gender_stereotype": 0.0026,
+        "neutral": 0.7407,
+        "regional_bias": 0.003,
+        "socioeconomic_occupation_bias": 0.2518
+      },
+      "is_biased": false
+    }
+  ]
+}
