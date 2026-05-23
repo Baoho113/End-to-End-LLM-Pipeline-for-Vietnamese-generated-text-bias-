@@ -1,12 +1,9 @@
 # End-to-End LLM Pipeline for Vietnamese Generated Text Bias
-
 ## Overview
-
 This project presents an end-to-end Large Language Model (LLM) pipeline designed to detect, analyze, and evaluate bias in Vietnamese AI-generated text. The system focuses on identifying potential social, cultural, gender, and linguistic biases produced by generative AI models in Vietnamese language contexts.
 
 The pipeline integrates data collection, preprocessing, model evaluation, bias detection, and reporting into a complete workflow that supports responsible AI research and development.
 
----
 
 ## Features
 
@@ -19,8 +16,6 @@ The pipeline integrates data collection, preprocessing, model evaluation, bias d
 * Visualization and reporting of bias metrics
 * End-to-end automation workflow
 
----
-
 ## Project Objectives
 
 The main goals of this project are:
@@ -31,7 +26,6 @@ The main goals of this project are:
 4. Support ethical AI research for Vietnamese NLP applications.
 5. Provide measurable metrics for model evaluation.
 
----
 
 ## Tech Stack
 
@@ -95,67 +89,6 @@ The pipeline consists of the following stages:
 6. **Visualization & Reporting**
 
    * Generate charts, summaries, and reports.
----
-
----
-
-## Installation
-
-### Clone the Repository
-
-```bash
-git clone https://github.com/your-username/End-to-End-LLM-Pipeline-for-Vietnamese-generated-text-bias.git
-cd End-to-End-LLM-Pipeline-for-Vietnamese-generated-text-bias
-```
-
-### Create a Virtual Environment
-
-```bash
-python -m venv venv
-```
-
-### Activate the Environment
-
-#### Windows
-
-```bash
-venv\Scripts\activate
-```
-
-#### macOS/Linux
-
-```bash
-source venv/bin/activate
-```
-
-### Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
----
-
-## Usage
-
-### Run the Main Pipeline
-
-```bash
-python main.py
-```
-
-### Run Bias Evaluation
-
-```bash
-python evaluation/evaluate_bias.py
-```
-
-### Launch Jupyter Notebook
-
-```bash
-jupyter notebook
-```
-
 ---
 
 ## Example Workflow
