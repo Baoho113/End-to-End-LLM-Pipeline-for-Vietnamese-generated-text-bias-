@@ -74,7 +74,7 @@
 
     "12": {
         "id": 12,
-        "label": "Regional Bias",
+        "label": "regional Bias",
         "description": "Bias based on geographic origin, region, locality, rural-urban differences, or regional stereotypes."
     }
 }
