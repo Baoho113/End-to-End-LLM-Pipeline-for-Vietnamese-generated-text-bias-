@@ -1,80 +1,15 @@
 {
-    "0": {
-        "id": 0,
-        "label": "non-bias",
-        "description": "Sentence does not contain stereotypes, prejudice, discrimination, or biased generalization."
-    },
-
-    "1": {
-        "id": 1,
-        "label": "Gender ",
-        "description": "Bias related to gender roles, expectations, or stereotypes."
-    },
-
-    "2": {
-        "id": 2,
-        "label": "Age ",
-        "description": "Bias targeting age groups such as elderly people, youth, or generations."
-    },
-
-    "3": {
-        "id": 3,
-        "label": "Class/Socioeconomic ",
-        "description": "Bias related to economic status, wealth, poverty, urban-rural background, or social class."
-    },
-
-    "4": {
-        "id": 4,
-        "label": "Occupation ",
-        "description": "Bias targeting occupations, professional prestige, or job hierarchy."
-    },
-
-    "5": {
-        "id": 5,
-        "label": "Educational ",
-        "description": "Bias related to educational background, academic achievement, school ranking, or degree status."
-    },
-
-    "6": {
-        "id": 6,
-        "label": "Religion/Belief ",
-        "description": "Bias based on religion, belief systems, spirituality, or non-belief."
-    },
-
-    "7": {
-        "id": 7,
-        "label": "Ethnicity ",
-        "description": "Bias targeting ethnic groups, minorities, or cultural identity."
-    },
-
-    "8": {
-        "id": 8,
-        "label": "Marital/Family Status ",
-
-        "description": "Bias related to marital status, family condition, divorce, single parents, or child-free individuals."
-    },
-
-    "9": {
-        "id": 9,
-        "label": "Political ",
-        "description": "Bias based on political viewpoints, ideological differences, or policy discussions."
-    },
-
-    "10": {
-        "id": 10,
-        "label": "Mental Health ",
-        "description": "Bias targeting mental health conditions such as depression, anxiety, or therapy."
-    },
-
-    "11": {
-        "id": 11,
-        "label": "appearance ",
-        "description": "Bias related to physical appearance, body shape, weight, height, skin tone, or attractiveness."
-    },
-
-    "12": {
-        "id": 12,
-        "label": "regional Bias",
-        "description": "Bias based on geographic origin, region, locality, rural-urban differences, or regional stereotypes."
-    }
+"non bias":0,
+"gender":1,
+"Age":2,
+"Class/Socioeconomic Bias":3,
+"Occupation Bias":4,
+"Educational Bias":5,
+"Religion/Belief Bias":6,
+"Ethnicity Bias":7,
+"Marital/Family Status Bias":8,
+"Political Bias":9,
+"Mental Health Bias":10,
+"appearance":11,
+"regional":12
 }
