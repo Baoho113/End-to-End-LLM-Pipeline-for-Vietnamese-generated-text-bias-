@@ -5,6 +5,34 @@ This project presents an end-to-end Large Language Model (LLM) pipeline designed
 The pipeline integrates data collection, preprocessing, model evaluation, bias detection, and reporting into a complete workflow that supports responsible AI research and development.
 
 
+## Usage
+
+### Step 1 — Train the model
+```bash
+python run_train.py
+```
+This reads `data/vietnamese_bias_claude.csv`, trains the classifier,
+and saves the model to `models/bias_detector.pkl`.
+
+### Step 2 — Evaluate an LLM
+```bash
+# Set your API key first
+export ANTHROPIC_API_KEY=sk-ant-...
+
+python run_evaluate_llm.py
+```
+This sends test prompts to the LLM, collects outputs,
+runs them through the detector, and exports results to `outputs/`.
+
+### Step 3 — Evaluate custom texts (no LLM needed)
+```python
+python run_custom.py --text "Phụ nữ không nên làm giám đốc."
+python run_custom.py --text "Người miền Trung nói giọng khó nghe." --mitigate --no-llm
+
+python run_custom.py --file my_outputs.txt
+python run_custom.py --file my_outputs.txt --mitigate --export
+```
+
 ## Features
 
 * Vietnamese text preprocessing and cleaning
