@@ -161,6 +161,14 @@ python src/training/inference_test.py "..." --threshold 0.2
 
 This is a threshold heuristic on top of the single softmax output, not an independently-trained multi-label model — scores compete and sum to 1, so a very confident top label naturally suppresses the rest. Tune `--threshold` down to surface more secondary labels, or up to only flag genuinely close calls.
 
+### 6. Serve over HTTP (for the UI)
+
+```bash
+uvicorn serve:app --reload --port 8000 --app-dir src/training
+```
+
+Exposes `POST /detect`, `POST /detect/batch`, `GET /metrics` (reads `checkpoints/phobert_bias_classifier/eval_metrics.json`, written by `evaluate.py`), and `GET /health`. `--app-dir src/training` is required — it lets uvicorn import `serve.py` without changing the process's working directory, so `config.py`'s repo-root-relative paths still resolve correctly.
+
 ### Known limitation
 
 `dataset/raw/vietnamese_bias_dataset.csv` is template-generated and duplicate-heavy (12,499 rows but only 4,277 unique sentences, several categories with as few as 25 uniques). The classifier scores ~99% macro F1 on the (now leak-free) test set, but that reflects near-perfect performance on in-template phrasing, not general Vietnamese text — confidently wrong predictions have been observed on plain neutral sentences outside the training templates. Treat current metrics as a pipeline-correctness check, not a production accuracy number, until the dataset is expanded with more diverse, non-templated examples.

@@ -14,12 +14,6 @@ export const BIAS_SAMPLES = {
 
 export type BiasSampleKey = keyof typeof BIAS_SAMPLES
 
-// AI System prompt for Claude
-export const BIAS_DETECTION_SYSTEM_PROMPT = `You are a bias detection assistant. Analyze the given text for bias and respond ONLY with valid JSON — no markdown, no extra text, no explanation.
-Format exactly:
-{"summary":"one concise sentence summarising the overall bias","overall":"low|medium|high","biases":[{"type":"Gender","score":0,"note":"brief note"},{"type":"Political","score":0,"note":"brief note"},{"type":"Racial","score":0,"note":"brief note"},{"type":"Sentiment","score":0,"note":"brief note"}]}
-Scoring: 0 = no bias, 100 = extreme bias. Be precise and consistent.`
-
 // Feature highlights for sidebar
 export const FEATURES = [
   {
@@ -34,14 +28,27 @@ export const FEATURES = [
   },
 ] as const
 
-// Default fallback bias analysis
-export const DEFAULT_BIAS_ANALYSIS = {
-  summary: 'Analysis complete.',
-  overall: 'medium' as const,
-  biases: [
-    { type: 'Gender' as const, score: 25, note: '' },
-    { type: 'Political' as const, score: 50, note: '' },
-    { type: 'Racial' as const, score: 15, note: '' },
-    { type: 'Sentiment' as const, score: 60, note: '' },
-  ],
-}
+// Sample Vietnamese sentences for the detection module (src/training/), each
+// already exercised against the trained checkpoint during development.
+export const DETECTION_SAMPLES = [
+  {
+    key: 'gender-occupation',
+    label: 'Gender + occupation',
+    text: 'Là một giám đốc thành đạt, anh ấy luôn đưa ra những quyết định quyết đoán và mạnh mẽ. Trong khi đó, các nữ trợ lý trong công ty chỉ phù hợp với những công việc nhẹ nhàng như pha trà, sắp xếp lịch họp và chăm sóc khách hàng.',
+  },
+  {
+    key: 'age',
+    label: 'Age',
+    text: 'Người già thường khó tiếp thu.',
+  },
+  {
+    key: 'gender-slang',
+    label: 'Gender (colloquial)',
+    text: 'Bọn đàn ông ẻo lả chỉ hợp làm thiết kế thời trang thôi.',
+  },
+  {
+    key: 'neutral',
+    label: 'Neutral (no bias)',
+    text: 'Hôm nay trời đẹp, tôi đi dạo công viên.',
+  },
+] as const

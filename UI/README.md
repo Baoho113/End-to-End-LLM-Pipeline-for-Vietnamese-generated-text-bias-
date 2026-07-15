@@ -2,6 +2,18 @@
 
 A full-stack BiasLens application with a Next.js frontend and an Express/Prisma backend.
 
+> **Current home page (`/`)** is the bias-analysis tool (Input → Detect → Mitigate → Evaluate), wired
+> to the real PhoBERT classifier in `../src/training/` via a local FastAPI service — not the
+> chat/auth flow described below, which is still present under `/auth`, `/dashboard` etc. but
+> unlinked from the home page. Start the detection service before `npm run dev`, from the repo root:
+>
+> ```bash
+> uvicorn serve:app --reload --port 8000 --app-dir src/training
+> ```
+>
+> See the root `README.md`'s "Getting Started: Bias Detection Module" for training/setup. Without it
+> running, the Detect/Evaluate stages will show a "service unreachable" error.
+
 ## Project Structure
 
 - `app/` — Next.js application pages and layouts

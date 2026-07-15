@@ -40,3 +40,42 @@ export interface ConversationHistory {
   messages: ChatMessage[]
   timestamp: number
 }
+
+// --- Detection module (src/training, served via FastAPI) ---
+// Real API response shape from src/training/inference_test.py:predict() --
+// 13-category single-label classifier with a confidence-threshold multi-label
+// list, not the 4-category shape above (which the old chat mock invented).
+
+export interface DetectionLabel {
+  label: string
+  confidence: number
+}
+
+export interface DetectionResult {
+  text: string
+  label: string
+  confidence: number
+  labels: DetectionLabel[]
+  probabilities: Record<string, number>
+}
+
+export interface CategoryMetric {
+  label: string
+  precision: number
+  recall: number
+  f1: number
+  support: number
+}
+
+export interface EvalMetrics {
+  generated_at: string
+  dataset: { train: number; val: number; test: number }
+  overall: {
+    accuracy: number
+    macro_precision: number
+    macro_recall: number
+    macro_f1: number
+    weighted_f1: number
+  }
+  per_category: CategoryMetric[]
+}
