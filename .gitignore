@@ -4,6 +4,8 @@ __pycache__/
 
 checkpoints/
 outputs/
+tmp_trainer/
+smoke_out/
 
 *.pyc
 *.pyo

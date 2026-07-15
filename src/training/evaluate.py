@@ -16,7 +16,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from sklearn.metrics import classification_report, confusion_matrix
-from transformers import AutoModelForSequenceClassification, Trainer
+from transformers import AutoModelForSequenceClassification, Trainer, TrainingArguments
 
 from config import OUTPUT_DIR, TEST_PATH, TRAIN_PATH, VAL_PATH
 from metrics import compute_metrics
@@ -41,7 +41,11 @@ def main():
     label_names = [id_to_label[i] for i in range(len(id_to_label))]
 
     test_ds = load_test_split()
-    trainer = Trainer(model=model, compute_metrics=compute_metrics)
+    # eval-only Trainer -- output_dir is required but nothing is written there
+    # (no save_strategy), so this just avoids Trainer's "tmp_trainer" default
+    # littering the repo root.
+    args = TrainingArguments(output_dir=f"{OUTPUT_DIR}/_eval_scratch", report_to=[])
+    trainer = Trainer(model=model, args=args, compute_metrics=compute_metrics)
     output = trainer.predict(test_ds)
 
     preds = np.argmax(output.predictions, axis=-1)
