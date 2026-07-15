@@ -4,3 +4,5 @@ datasets>=2.19
 scikit-learn>=1.4
 pandas>=2.2
 pyvi>=0.1.1
+fastapi>=0.110
+uvicorn>=0.29
