@@ -102,6 +102,70 @@ The pipeline consists of the following stages:
 
 ---
 
+## Getting Started: Bias Detection Module
+
+The detection module (`dataset/` + `src/training/`) fine-tunes PhoBERT to classify a Vietnamese sentence into one of 13 categories defined in `docs/annotation_guideline.md` (Non-bias, Gender Bias, Age Bias, Class/Socioeconomic Bias, Occupation Bias, Educational Bias, Religion/Belief Bias, Ethnicity Bias, Marital/Family Status Bias, Political Bias, Mental Health Bias, Appearance Bias, Regional Bias). All commands below are run from the repo root.
+
+### 1. Setup
+
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Rebuild the dataset splits
+
+Only needed once, or again after editing `dataset/raw/vietnamese_bias_dataset.csv`. Dedupes the raw data, builds a leak-free stratified 80/10/10 train/val/test split, and regenerates `dataset/metadata/label_mapping.json`.
+
+```bash
+python dataset/build_splits.py
+```
+
+### 3. Train
+
+```bash
+python src/training/train_phobert.py
+```
+
+Reads `dataset/processed/{train,val}.csv`, fine-tunes PhoBERT-base with class weighting to counter label imbalance, and saves the checkpoint to `checkpoints/phobert_bias_classifier/` (~75 min on CPU; gitignored — not committed, so this step must be run locally or the checkpoint shared separately).
+
+### 4. Evaluate
+
+```bash
+python src/training/evaluate.py
+```
+
+Runs the checkpoint against the held-out `dataset/processed/test.csv` and prints a full classification report (precision/recall/F1 per category, macro/weighted averages) plus a confusion matrix.
+
+### 5. Detect
+
+Single sentence:
+
+```bash
+python src/training/inference_test.py "Người già thường khó tiếp thu."
+```
+
+Mass detect over a file — a `.txt` (one sentence per line) or a `.csv` with a `text` column:
+
+```bash
+python src/training/inference_test.py --file sentences.txt
+python src/training/inference_test.py --file input.csv --out results.csv
+```
+
+Without `--out`, results print as JSON (label, confidence, full per-category probability distribution). With `--out`, a `text,label,confidence,labels` CSV is written instead.
+
+The model is trained single-label (see "Known limitation" below), but every result also includes a `labels` list — every category whose score clears `--threshold` (default `0.2`), sorted by confidence, so sentences that plausibly touch more than one category (e.g. both Gender Bias and Occupation Bias) surface all of them instead of only the single winner:
+
+```bash
+python src/training/inference_test.py "..." --threshold 0.2
+```
+
+This is a threshold heuristic on top of the single softmax output, not an independently-trained multi-label model — scores compete and sum to 1, so a very confident top label naturally suppresses the rest. Tune `--threshold` down to surface more secondary labels, or up to only flag genuinely close calls.
+
+### Known limitation
+
+`dataset/raw/vietnamese_bias_dataset.csv` is template-generated and duplicate-heavy (12,499 rows but only 4,277 unique sentences, several categories with as few as 25 uniques). The classifier scores ~99% macro F1 on the (now leak-free) test set, but that reflects near-perfect performance on in-template phrasing, not general Vietnamese text — confidently wrong predictions have been observed on plain neutral sentences outside the training templates. Treat current metrics as a pipeline-correctness check, not a production accuracy number, until the dataset is expanded with more diverse, non-templated examples.
+
+---
 
 ## Research & Ethical Considerations
 
