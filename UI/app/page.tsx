@@ -47,7 +47,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-full w-full overflow-y-auto bg-bg-0">
+    <div className="h-full w-full overflow-y-auto bg-bg-0">
       <header className="sticky top-0 z-10 flex items-center gap-2 px-6 py-4 border-b border-border bg-bg-0/85 backdrop-blur-md">
         <Scale size={18} className="text-accent-text" />
         <span className="font-semibold text-text-1">BiasLens</span>
