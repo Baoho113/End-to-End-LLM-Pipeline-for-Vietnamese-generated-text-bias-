@@ -2,11 +2,13 @@ import React from 'react'
 import { Ghost } from 'lucide-react'
 
 interface TopbarProps {
+  userEmail: string
   ghostMode: boolean
   onToggleGhostMode: () => void
 }
 
 export const Topbar: React.FC<TopbarProps> = ({
+  userEmail,
   ghostMode,
   onToggleGhostMode,
 }) => {
@@ -17,16 +19,14 @@ export const Topbar: React.FC<TopbarProps> = ({
         <span
           className="
             text-[11px]
-            font-semibold
-            tracking-[0.2em]
-            uppercase
+            font-medium
             text-text-3
             select-none
             transition-all duration-300
             hover:text-text-1
           "
         >
-          NEK@NDIDN_CODE
+          {userEmail}
         </span>
 
         <div className="relative group">

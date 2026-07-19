@@ -1,5 +1,5 @@
 // Auth codes and storage keys
-export const EARLY_ACCESS_CODE = 'NEK@NDIDN_CODE'
+export const EARLY_ACCESS_CODE = 'TRYforFREE'
 export const USER_STORAGE_KEY = 'bl_users'
 export const SESSION_STORAGE_KEY = 'bl_session'
 

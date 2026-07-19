@@ -60,7 +60,7 @@ export default function DashboardPage() {
         onLogout={handleLogout}
       />
       <section className="flex min-w-0 flex-1 flex-col overflow-hidden">
-        <Topbar ghostMode={ghostMode} onToggleGhostMode={toggleGhostMode} />
+        <Topbar userEmail={user.email} ghostMode={ghostMode} onToggleGhostMode={toggleGhostMode} />
         <ChatArea messages={messages} isAnalyzing={isAnalyzing} />
         <InputArea onSend={sendMessage} isAnalyzing={isAnalyzing} ghostMode={ghostMode} onCancel={cancelAnalysis} />
       </section>

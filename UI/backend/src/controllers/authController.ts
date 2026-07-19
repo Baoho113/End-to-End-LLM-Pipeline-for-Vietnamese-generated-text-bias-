@@ -1,4 +1,3 @@
-// NEK@NDIDN_CODE
 import { Request, Response } from 'express'
 import { PrismaClient } from '@prisma/client'
 import { hashPassword, comparePassword } from '../utils/password'
@@ -17,8 +16,8 @@ export async function register(req: Request, res: Response): Promise<void> {
     }
 
     // Validate invite code
-    const EARLY_ACCESS_CODE = 'NEK@NDIDN_CODE' // This should ideally come from an environment variable
-    if (code !== EARLY_ACCESS_CODE) {
+    const EARLY_ACCESS_CODE = 'TRYforFREE' // This should ideally come from an environment variable
+    if (code.trim().toUpperCase() !== EARLY_ACCESS_CODE.toUpperCase()) {
       res.status(403).json({ error: 'Invalid early access code' })
       return
     }

@@ -32,7 +32,7 @@ export const validateCode = (code: string, validCode: string): ValidationResult 
   if (!normalized) {
     return { isValid: false }
   }
-  if (normalized === validCode) {
+  if (normalized === validCode.trim().toUpperCase()) {
     return { isValid: true }
   }
   return { isValid: false, message: `Invalid code. Hint: ${validCode}` }
