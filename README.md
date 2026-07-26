@@ -169,6 +169,28 @@ uvicorn serve:app --reload --port 8000 --app-dir src/training
 
 Exposes `POST /detect`, `POST /detect/batch`, `GET /metrics` (reads `checkpoints/phobert_bias_classifier/eval_metrics.json`, written by `evaluate.py`), and `GET /health`. `--app-dir src/training` is required — it lets uvicorn import `serve.py` without changing the process's working directory, so `config.py`'s repo-root-relative paths still resolve correctly.
 
+### 7. Run the web UI
+
+The UI (`UI/`) is a Next.js app whose home page (`/`) is the Input → Detect → Mitigate → Evaluate analysis tool, talking to the service from step 6. Two terminals, both from the repo root:
+
+**Terminal 1 — detection API** (step 6 above, keep it running):
+
+```bash
+uvicorn serve:app --reload --port 8000 --app-dir src/training
+```
+
+**Terminal 2 — frontend:**
+
+```bash
+cd UI
+npm install   # first time only
+npm run dev
+```
+
+Open **http://localhost:3000**. Start the detection API first (or at least before using the Detect/Evaluate stages) — the UI's `/api/detect` and `/api/metrics` routes proxy to `http://localhost:8000` and show a "service unreachable" error if it isn't up yet.
+
+`UI/backend/` (Express + Prisma, its own `npm run dev` on port 3001) is a **separate, unrelated** backend for the old chat/login pages (`/auth`, `/dashboard`), which still exist but aren't linked from the home page. You don't need to run it for the analysis tool above — only if you want to explore that older chat flow.
+
 ### Known limitation
 
 `dataset/raw/vietnamese_bias_dataset.csv` is template-generated and duplicate-heavy (12,499 rows but only 4,277 unique sentences, several categories with as few as 25 uniques). The classifier scores ~99% macro F1 on the (now leak-free) test set, but that reflects near-perfect performance on in-template phrasing, not general Vietnamese text — confidently wrong predictions have been observed on plain neutral sentences outside the training templates. Treat current metrics as a pipeline-correctness check, not a production accuracy number, until the dataset is expanded with more diverse, non-templated examples.
