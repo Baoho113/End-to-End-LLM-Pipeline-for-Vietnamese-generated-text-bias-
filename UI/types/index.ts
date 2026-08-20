@@ -59,6 +59,15 @@ export interface DetectionResult {
   probabilities: Record<string, number>
 }
 
+// --- Mitigation module (src/training/mitigate.py, OpenAI rewrite) ---
+
+export interface MitigationResult {
+  original_text: string
+  safer_text: string
+  label: string | null
+  model: string
+}
+
 export interface CategoryMetric {
   label: string
   precision: number

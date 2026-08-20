@@ -161,19 +161,58 @@ python src/training/inference_test.py "..." --threshold 0.2
 
 This is a threshold heuristic on top of the single softmax output, not an independently-trained multi-label model — scores compete and sum to 1, so a very confident top label naturally suppresses the rest. Tune `--threshold` down to surface more secondary labels, or up to only flag genuinely close calls.
 
-### 6. Serve over HTTP (for the UI)
+### 6. Mitigate (AI rewrite)
+
+`src/training/mitigate.py` rewrites a flagged sentence into a safer, non-biased version via an OpenAI-compatible chat API (Task 4, "safer_text", done with a hosted LLM rather than a fine-tuned ViT5 — that's the v2/severity track). It's called through the `POST /mitigate` endpoint added to `serve.py` in step 7, but also has its own small CLI for testing it in isolation.
+
+By default it talks to **RMIT's VAL gateway** (`https://val.rmit.edu.au/api/`, model `openai-gpt-4o`), not OpenAI's own `api.openai.com` — that's what the `VAL-Balam-Key1` Bitwarden item is scoped to, and a plain OpenAI-format key/URL will fail auth against it. Override `OPENAI_BASE_URL` (empty string to hit OpenAI's own API instead) and `MITIGATION_MODEL` if you're using a different provider/account.
+
+The key itself isn't kept in `.env` — it's pulled at request time from your Bitwarden vault via the `bw` CLI:
+
+```bash
+npm install -g @bitwarden/cli   # or the standalone binary: https://bitwarden.com/help/cli/
+bw login
+bw unlock                       # prints an export command with a session key
+export BW_SESSION="<session key from the line above>"
+```
+
+`bw unlock` needs your master password once per shell — `serve.py` never prompts for it itself, so keep that shell (or export `BW_SESSION` into whichever shell runs uvicorn) unlocked while the detection API is running. It looks up the item named `VAL-Balam-Key1`'s password field by default; override with `OPENAI_BW_ITEM` if you rename it or want to point at a different item (e.g. a personal OpenAI-account key), or set `OPENAI_API_KEY` directly to skip Bitwarden entirely (e.g. in CI). Note: **"View items, hidden passwords" collection permission also blocks CLI/API retrieval, not just the web vault UI** — it's a server-side ACL, not a UI-only restriction, so if `bw get password` fails with "No password available for this login" despite the vault being unlocked, that's the org permission to fix, not a `bw`/env issue.
+
+**Test that the key resolves** (from repo root, no API call, no tokens spent):
+
+```bash
+python src/training/mitigate.py
+```
+
+Prints a masked key (`sk-proj-...ab12 (164 chars)`) and which source it came from, or a specific error (`bw` missing from PATH, vault locked, item not found/empty/permission-restricted). **Test a full rewrite:**
+
+```bash
+python src/training/mitigate.py "Người già thường khó tiếp thu." --label "Age Bias"
+```
+
+**Choosing the model/endpoint:** set `MITIGATION_MODEL` and/or `OPENAI_BASE_URL` before starting uvicorn:
+
+```bash
+export MITIGATION_MODEL=openai-gpt-4o
+export OPENAI_BASE_URL=https://val.rmit.edu.au/api/   # empty string for OpenAI's own api.openai.com
+uvicorn serve:app --reload --port 8000 --app-dir src/training
+```
+
+or prefix a single test run: `MITIGATION_MODEL=openai-gpt-4o python src/training/mitigate.py "..."`. There's no allow-list — an invalid model name or base URL surfaces as an API error (404/401/etc.) in the response.
+
+### 7. Serve over HTTP (for the UI)
 
 ```bash
 uvicorn serve:app --reload --port 8000 --app-dir src/training
 ```
 
-Exposes `POST /detect`, `POST /detect/batch`, `GET /metrics` (reads `checkpoints/phobert_bias_classifier/eval_metrics.json`, written by `evaluate.py`), and `GET /health`. `--app-dir src/training` is required — it lets uvicorn import `serve.py` without changing the process's working directory, so `config.py`'s repo-root-relative paths still resolve correctly.
+Exposes `POST /detect`, `POST /detect/batch`, `POST /mitigate` (step 6 above), `GET /metrics` (reads `checkpoints/phobert_bias_classifier/eval_metrics.json`, written by `evaluate.py`), and `GET /health`. `--app-dir src/training` is required — it lets uvicorn import `serve.py` without changing the process's working directory, so `config.py`'s repo-root-relative paths still resolve correctly.
 
-### 7. Run the web UI
+### 8. Run the web UI
 
-The UI (`UI/`) is a Next.js app whose home page (`/`) is the Input → Detect → Mitigate → Evaluate analysis tool, talking to the service from step 6. Two terminals, both from the repo root:
+The UI (`UI/`) is a Next.js app whose home page (`/`) is the Input → Detect → Mitigate → Evaluate analysis tool, talking to the service from step 7. Two terminals, both from the repo root:
 
-**Terminal 1 — detection API** (step 6 above, keep it running):
+**Terminal 1 — detection API** (step 7 above, keep it running):
 
 ```bash
 uvicorn serve:app --reload --port 8000 --app-dir src/training
@@ -187,7 +226,7 @@ npm install   # first time only
 npm run dev
 ```
 
-Open **http://localhost:3000**. Start the detection API first (or at least before using the Detect/Evaluate stages) — the UI's `/api/detect` and `/api/metrics` routes proxy to `http://localhost:8000` and show a "service unreachable" error if it isn't up yet.
+Open **http://localhost:3000**. Start the detection API first (or at least before using the Detect/Mitigate/Evaluate stages) — the UI's `/api/detect`, `/api/mitigate`, and `/api/metrics` routes proxy to `http://localhost:8000` and show a "service unreachable" error if it isn't up yet.
 
 `UI/backend/` (Express + Prisma, its own `npm run dev` on port 3001) is a **separate, unrelated** backend for the old chat/login pages (`/auth`, `/dashboard`), which still exist but aren't linked from the home page. You don't need to run it for the analysis tool above — only if you want to explore that older chat flow.
 

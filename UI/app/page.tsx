@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { Scale } from 'lucide-react'
-import { detectBias, getEvalMetrics } from '@/lib/api'
-import { DetectionResult, EvalMetrics } from '@/types'
+import { detectBias, getEvalMetrics, mitigateBias } from '@/lib/api'
+import { DetectionResult, EvalMetrics, MitigationResult } from '@/types'
 import { InputStage } from '@/components/analysis/InputStage'
 import { DetectStage } from '@/components/analysis/DetectStage'
 import { MitigateStage } from '@/components/analysis/MitigateStage'
@@ -21,6 +21,10 @@ export default function Home() {
   const [detecting, setDetecting] = useState(false)
   const [detectError, setDetectError] = useState<string | null>(null)
 
+  const [mitigation, setMitigation] = useState<MitigationResult | null>(null)
+  const [mitigating, setMitigating] = useState(false)
+  const [mitigateError, setMitigateError] = useState<string | null>(null)
+
   const [metrics, setMetrics] = useState<EvalMetrics | null>(null)
   const [metricsLoading, setMetricsLoading] = useState(true)
 
@@ -35,6 +39,8 @@ export default function Home() {
     if (!text) return
     setDetecting(true)
     setDetectError(null)
+    setMitigation(null)
+    setMitigateError(null)
     try {
       const data = await detectBias(text)
       setResult(data)
@@ -43,6 +49,20 @@ export default function Home() {
       setResult(null)
     } finally {
       setDetecting(false)
+    }
+  }
+
+  async function handleMitigate() {
+    if (!result) return
+    setMitigating(true)
+    setMitigateError(null)
+    try {
+      const data = await mitigateBias(result.text, result.label)
+      setMitigation(data)
+    } catch (err) {
+      setMitigateError(err instanceof Error ? err.message : 'Mitigation failed')
+    } finally {
+      setMitigating(false)
     }
   }
 
@@ -71,7 +91,15 @@ export default function Home() {
               {stage.n === 2 && (
                 <DetectStage result={result} loading={detecting} error={detectError} />
               )}
-              {stage.n === 3 && <MitigateStage />}
+              {stage.n === 3 && (
+                <MitigateStage
+                  detection={result}
+                  result={mitigation}
+                  loading={mitigating}
+                  error={mitigateError}
+                  onMitigate={handleMitigate}
+                />
+              )}
               {stage.n === 4 && <EvaluateStage metrics={metrics} loading={metricsLoading} />}
             </div>
           </section>

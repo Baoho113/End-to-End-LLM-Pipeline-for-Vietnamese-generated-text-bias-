@@ -1,4 +1,4 @@
-import { DetectionResult, EvalMetrics } from '@/types'
+import { DetectionResult, EvalMetrics, MitigationResult } from '@/types'
 
 export async function detectBias(text: string, threshold?: number): Promise<DetectionResult> {
   const response = await fetch('/api/detect', {
@@ -10,6 +10,21 @@ export async function detectBias(text: string, threshold?: number): Promise<Dete
   if (!response.ok) {
     const error = await response.json().catch(() => ({}))
     throw new Error(error.detail || 'Detection request failed')
+  }
+
+  return response.json()
+}
+
+export async function mitigateBias(text: string, label?: string | null): Promise<MitigationResult> {
+  const response = await fetch('/api/mitigate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text, label }),
+  })
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}))
+    throw new Error(error.detail || 'Mitigation request failed')
   }
 
   return response.json()

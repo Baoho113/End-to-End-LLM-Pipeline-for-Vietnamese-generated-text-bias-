@@ -17,6 +17,7 @@ from pydantic import BaseModel
 
 from config import OUTPUT_DIR
 from inference_test import DEFAULT_THRESHOLD, predict, predict_batch
+from mitigate import mitigate as run_mitigation
 
 METRICS_PATH = Path(OUTPUT_DIR) / "eval_metrics.json"
 
@@ -40,6 +41,11 @@ class DetectBatchRequest(BaseModel):
     threshold: float = DEFAULT_THRESHOLD
 
 
+class MitigateRequest(BaseModel):
+    text: str
+    label: str | None = None
+
+
 @app.get("/health")
 def health() -> dict:
     return {"status": "ok"}
@@ -53,6 +59,14 @@ def detect(req: DetectRequest) -> dict:
 @app.post("/detect/batch")
 def detect_batch(req: DetectBatchRequest) -> list[dict]:
     return predict_batch(req.texts, threshold=req.threshold)
+
+
+@app.post("/mitigate")
+def mitigate(req: MitigateRequest) -> dict:
+    try:
+        return run_mitigation(req.text, label=req.label)
+    except RuntimeError as exc:
+        raise HTTPException(status_code=502, detail=str(exc))
 
 
 @app.get("/metrics")

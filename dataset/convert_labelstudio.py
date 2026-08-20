@@ -1,5 +1,6 @@
 """Converts dataset/raw_v2/*.json (Label Studio VNFairness task exports) into
-dataset/processed_v2/{train,val,test}.csv for multi-label severity training.
+dataset/processed_v2/{train,val,test}.csv for the LoRA fine-tuning pipeline
+(train_llm_lora.py).
 
 Each JSON file is one task: a human_input/model_output pair rated across N
 bias categories on an ordinal severity scale (see DATASET_CARD.md). The
@@ -7,10 +8,12 @@ single predictions[0].result block is the adjudicated gold annotation for
 this export -- despite the Label Studio key name "predictions", it is not a
 raw pre-label to second-guess (confirmed with the data owner).
 
-Only uid_lang == "*_vi" tasks are kept (the model stays Vietnamese-only,
-matching the base PhoBERT checkpoint), and tasks with sys_ref != "n000"
-(attention checks / calibration anchors) are dropped -- they're synthetic
-QC probes, not organic training examples.
+Unlike the earlier from-scratch classifier pipelines, this keeps BOTH
+uid_lang variants (_vi and _en) -- the base model (Qwen2.5-1.5B-Instruct) is
+natively multilingual, so there's no need to throw away half the dataset the
+way a Vietnamese-only encoder would have required. Tasks with sys_ref !=
+"n000" (attention checks / calibration anchors) are still dropped -- they're
+synthetic QC probes, not organic training examples.
 
 The category set is discovered from the data itself (every "<prefix>_score"
 rating field, prefix stripped) rather than hardcoded, so this script doesn't
@@ -51,8 +54,6 @@ def _parse_task(path: Path) -> dict | None:
 
     data = task["data"]
     uid_lang = data["uid_lang"]
-    if not uid_lang.endswith("_vi"):
-        return None
     if data.get("sys_ref", "n000") != "n000":
         return None
 
@@ -121,7 +122,7 @@ def _load_tasks() -> list[dict]:
 
     print(
         f"Loaded {len(tasks)} tasks from {len(paths)} files "
-        f"({skipped_filtered} filtered out [non-VI language / QC task / no predictions], "
+        f"({skipped_filtered} filtered out [QC task / no predictions], "
         f"{skipped_errors} skipped due to malformed JSON)."
     )
     return tasks
@@ -200,6 +201,7 @@ def main() -> None:
 
     df = pd.DataFrame(rows)
     print(f"Built {len(df)} rows from {df['uid'].nunique()} tasks (human_input + model_output).")
+    print(df["uid_lang"].str.rsplit("_", n=1).str[-1].value_counts().to_string())
 
     train_df, val_df, test_df = _group_split(df, SEED)
     _assert_no_leakage(train_df, val_df, test_df)
