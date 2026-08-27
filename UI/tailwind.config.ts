@@ -8,22 +8,31 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Lighter dark theme -- was #080910..#1f2130 (near-black); raised
+        // luminance while keeping the same relative depth steps between
+        // levels, so nesting (panel-on-page, row-on-panel) still reads.
         bg: {
-          0: '#080910',
-          1: '#0d0e15',
-          2: '#12141e',
-          3: '#181a27',
-          4: '#1f2130',
+          0: '#14161f',
+          1: '#191c26',
+          2: '#20232f',
+          3: '#282c3a',
+          4: '#333749',
         },
         text: {
           1: 'rgba(255,255,255,0.92)',
           2: 'rgba(255,255,255,0.6)',
-          3: 'rgba(255,255,255,0.35)',
-          4: 'rgba(255,255,255,0.18)',
+          // 3 and 4 were previously 0.35/0.18 -- measured contrast against
+          // bg-2 was 3.22:1 and 1.73:1, both well under WCAG AA's 4.5:1 for
+          // body text. Raised to hit ~4.5:1 and ~3.3:1ish (re-checked against
+          // the lighter bg-2 above -- required alpha barely moved).
+          3: 'rgba(255,255,255,0.46)',
+          4: 'rgba(255,255,255,0.36)',
         },
         border: {
-          DEFAULT: 'rgba(255,255,255,0.07)',
-          subtle: 'rgba(255,255,255,0.12)',
+          // Previously 0.07/0.12 (contrast ~1.2:1 / ~1.4:1 against bg-2 --
+          // essentially invisible as dividers). Raised to ~2.5:1 / ~3.8:1.
+          DEFAULT: 'rgba(255,255,255,0.28)',
+          subtle: 'rgba(255,255,255,0.40)',
         },
         accent: {
           DEFAULT: '#5b4fcf',

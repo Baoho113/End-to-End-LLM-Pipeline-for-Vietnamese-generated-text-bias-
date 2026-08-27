@@ -21,7 +21,9 @@ export function MitigateStage({ detection, result, loading, error, onMitigate }:
     )
   }
 
-  if (detection.label === 'Non-bias' && !result) {
+  const hasFlagged = Object.values(detection.categories).some((c) => c.flagged)
+
+  if (!hasFlagged && !result) {
     return (
       <div className="rounded-lg bg-bg-2 border border-border-subtle border-dashed px-4 py-8 text-center text-sm text-text-4">
         No bias flagged — nothing to rewrite.

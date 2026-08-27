@@ -39,6 +39,12 @@ BW_ITEM_NAME = os.environ.get("OPENAI_BW_ITEM", "VAL-Balam-Key1")
 MITIGATION_MODEL = os.environ.get("MITIGATION_MODEL", "openai-gpt-4o")
 OPENAI_BASE_URL = os.environ.get("OPENAI_BASE_URL", "https://val.rmit.edu.au/api/")
 
+# The openai SDK's own default timeout is 600s -- far longer than a UI button
+# should ever sit spinning. A short rewrite normally comes back in a few
+# seconds; if the gateway is degraded, fail fast with a clear error instead
+# of hanging silently for up to 10 minutes.
+REQUEST_TIMEOUT_SECONDS = float(os.environ.get("MITIGATION_TIMEOUT_SECONDS", "30"))
+
 SYSTEM_PROMPT = (
     "Bạn là một biên tập viên trung lập. Nhiệm vụ của bạn là viết lại câu "
     "tiếng Việt do người dùng cung cấp để loại bỏ định kiến/thiên vị, trong "
@@ -70,7 +76,15 @@ def _get_api_key() -> str:
             capture_output=True,
             text=True,
             check=True,
+            timeout=REQUEST_TIMEOUT_SECONDS,
         )
+    except subprocess.TimeoutExpired as exc:
+        raise RuntimeError(
+            f"`bw get password {BW_ITEM_NAME}` didn't respond within {REQUEST_TIMEOUT_SECONDS}s "
+            "-- this usually means the vault is locked and `bw` is stuck instead of failing "
+            "cleanly. Run `bw unlock` in this shell, export the BW_SESSION it prints, and "
+            "restart uvicorn from that same shell."
+        ) from exc
     except subprocess.CalledProcessError as exc:
         raise RuntimeError(
             f"`bw get password {BW_ITEM_NAME}` failed -- is the vault unlocked "
@@ -87,8 +101,13 @@ def _get_api_key() -> str:
 @lru_cache(maxsize=1)
 def _get_client() -> OpenAI:
     if OPENAI_BASE_URL:
-        return OpenAI(api_key=_get_api_key(), base_url=OPENAI_BASE_URL.rstrip("/"))
-    return OpenAI(api_key=_get_api_key())
+        return OpenAI(
+            api_key=_get_api_key(),
+            base_url=OPENAI_BASE_URL.rstrip("/"),
+            timeout=REQUEST_TIMEOUT_SECONDS,
+            max_retries=1,
+        )
+    return OpenAI(api_key=_get_api_key(), timeout=REQUEST_TIMEOUT_SECONDS, max_retries=1)
 
 
 def mitigate(text: str, label: str | None = None) -> dict:

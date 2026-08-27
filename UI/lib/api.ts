@@ -1,10 +1,10 @@
 import { DetectionResult, EvalMetrics, MitigationResult } from '@/types'
 
-export async function detectBias(text: string, threshold?: number): Promise<DetectionResult> {
-  const response = await fetch('/api/detect', {
+export async function detectBias(text: string): Promise<DetectionResult> {
+  const response = await fetch('/api/detect-severity', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text, threshold }),
+    body: JSON.stringify({ text }),
   })
 
   if (!response.ok) {

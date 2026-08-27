@@ -195,7 +195,7 @@ python src/training/mitigate.py "Người già thường khó tiếp thu." --lab
 ```bash
 export MITIGATION_MODEL=openai-gpt-4o
 export OPENAI_BASE_URL=https://val.rmit.edu.au/api/   # empty string for OpenAI's own api.openai.com
-uvicorn serve:app --reload --port 8000 --app-dir src/training
+python -m uvicorn serve:app --reload --port 8000 --app-dir src/training
 ```
 
 or prefix a single test run: `MITIGATION_MODEL=openai-gpt-4o python src/training/mitigate.py "..."`. There's no allow-list — an invalid model name or base URL surfaces as an API error (404/401/etc.) in the response.
@@ -203,10 +203,12 @@ or prefix a single test run: `MITIGATION_MODEL=openai-gpt-4o python src/training
 ### 7. Serve over HTTP (for the UI)
 
 ```bash
-uvicorn serve:app --reload --port 8000 --app-dir src/training
+python -m uvicorn serve:app --reload --port 8000 --app-dir src/training
 ```
 
-Exposes `POST /detect`, `POST /detect/batch`, `POST /mitigate` (step 6 above), `GET /metrics` (reads `checkpoints/phobert_bias_classifier/eval_metrics.json`, written by `evaluate.py`), and `GET /health`. `--app-dir src/training` is required — it lets uvicorn import `serve.py` without changing the process's working directory, so `config.py`'s repo-root-relative paths still resolve correctly.
+Exposes `POST /detect`, `POST /detect/batch` (legacy single-label PhoBERT classifier), `POST /detect-severity` (the 14-category LoRA-fine-tuned Qwen2.5 model the UI actually calls now, see `src/training/train_llm_lora.py`), `POST /mitigate` (step 6 above), `GET /metrics` (reads `checkpoints/phobert_bias_classifier/eval_metrics.json`, written by `evaluate.py`), and `GET /health`. `--app-dir src/training` is required — it lets uvicorn import `serve.py` without changing the process's working directory, so `config.py`'s repo-root-relative paths still resolve correctly.
+
+If this machine has more than one Python installation (e.g. Anaconda alongside a plain python.org install), make sure the `uvicorn`/`python` you're invoking is the one with `torch`/`transformers`/`peft` installed — `python -m uvicorn` (rather than a bare `uvicorn` on PATH) uses whichever `python` resolves first, which sidesteps picking up a different interpreter that's missing those packages.
 
 ### 8. Run the web UI
 
@@ -215,7 +217,7 @@ The UI (`UI/`) is a Next.js app whose home page (`/`) is the Input → Detect �
 **Terminal 1 — detection API** (step 7 above, keep it running):
 
 ```bash
-uvicorn serve:app --reload --port 8000 --app-dir src/training
+python -m uvicorn serve:app --reload --port 8000 --app-dir src/training
 ```
 
 **Terminal 2 — frontend:**

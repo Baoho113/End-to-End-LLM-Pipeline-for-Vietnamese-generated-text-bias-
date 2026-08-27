@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { Scale } from 'lucide-react'
 import { detectBias, getEvalMetrics, mitigateBias } from '@/lib/api'
+import { categoryLabel } from '@/lib/constants'
 import { DetectionResult, EvalMetrics, MitigationResult } from '@/types'
 import { InputStage } from '@/components/analysis/InputStage'
 import { DetectStage } from '@/components/analysis/DetectStage'
@@ -57,7 +58,11 @@ export default function Home() {
     setMitigating(true)
     setMitigateError(null)
     try {
-      const data = await mitigateBias(result.text, result.label)
+      const flaggedLabel = Object.entries(result.categories)
+        .filter(([, v]) => v.flagged)
+        .map(([category]) => categoryLabel(category))
+        .join(', ')
+      const data = await mitigateBias(result.text, flaggedLabel || null)
       setMitigation(data)
     } catch (err) {
       setMitigateError(err instanceof Error ? err.message : 'Mitigation failed')

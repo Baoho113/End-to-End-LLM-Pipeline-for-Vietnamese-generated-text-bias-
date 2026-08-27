@@ -3,13 +3,17 @@
 A full-stack BiasLens application with a Next.js frontend and an Express/Prisma backend.
 
 > **Current home page (`/`)** is the bias-analysis tool (Input → Detect → Mitigate → Evaluate), wired
-> to the real PhoBERT classifier in `../src/training/` via a local FastAPI service — not the
-> chat/auth flow described below, which is still present under `/auth`, `/dashboard` etc. but
-> unlinked from the home page. Start the detection service before `npm run dev`, from the repo root:
+> to the 14-category LoRA-fine-tuned Qwen2.5 severity model in `../src/training/` via a local FastAPI
+> service — not the chat/auth flow described below, which is still present under `/auth`, `/dashboard`
+> etc. but unlinked from the home page. Start the detection service before `npm run dev`, from the repo root:
 >
 > ```bash
-> uvicorn serve:app --reload --port 8000 --app-dir src/training
+> python -m uvicorn serve:app --reload --port 8000 --app-dir src/training
 > ```
+>
+> Use `python -m uvicorn` rather than a bare `uvicorn` if this machine has more than one Python
+> installation (e.g. Anaconda) -- a bare `uvicorn` on PATH can resolve to one that's missing
+> `torch`/`transformers`/`peft`.
 >
 > See the root `README.md`'s "Getting Started: Bias Detection Module" for training/setup. Without it
 > running, the Detect/Evaluate stages will show a "service unreachable" error.
